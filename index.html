@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Wikipedia Random Summary</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        #summary img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        #summary p {
+            text-align: left;
+            max-width: 800px; /* Adjust the maximum width according to your preference */
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        // Function to fetch random summary from Wikipedia API
+        async function fetchRandomSummary() {
+            try {
+                const response = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+                const data = await response.json();
+
+                if (data) {
+                    const thumbnail = data.thumbnail;
+                    const thumbnailHTML = thumbnail ? `<img src="${thumbnail.source}" alt="${data.title}">` : '';
+
+                    document.getElementById('summary').innerHTML = `
+                        <h2>${data.title}</h2>
+                        ${thumbnailHTML}
+                        <p>${data.extract}</p>
+                    `;
+                } else {
+                    throw new Error('No data received from the API.');
+                }
+            } catch (error) {
+                console.error('Error fetching random summary:', error.message);
+            }
+        }
+
+        // Fetch a random summary when the page loads
+        window.onload = fetchRandomSummary;
+    </script>
+</body>
+</html>
